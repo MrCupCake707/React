@@ -12,7 +12,7 @@ function App() {
        <main>
         <h1> Пробуем vita+react</h1>
        </main>
-       <Counter />
+      <Counter />
        </div>
         )
 }
