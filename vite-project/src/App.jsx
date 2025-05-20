@@ -4,7 +4,7 @@ import Header from './components/Header'
 import Counter from './components/Counter'
 import ReactDOM from 'react-dom/client'
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<Counter />);
+root.render(<Counter />)
 function App() {
   const [count, setCount] = useState(0)
  

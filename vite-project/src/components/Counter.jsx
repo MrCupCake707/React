@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+/*import React, { useState } from 'react'
 
 export default function Counter(){
 
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(5)
 
-  const plus = () => setCount(prev => prev + 1);
-  const minus = () => setCount(prev => prev - 1);
+  const plus = () => setCount(prev => prev + 1)
+  const minus = () => setCount(prev => prev - 1)
   const reset = () => setCount(0);
 
   return (
@@ -16,27 +16,27 @@ export default function Counter(){
       <button onClick={reset}>Сбросить</button>
     </div>
   );
-}
-/*import { useState } from 'react'
+}*/
+import { useState } from 'react'
 export default function Counter(){
 
     const  [count, setCount] = useState(0)
         function plus () {
-            setCount (count +1)
+            setCount ((prevCount)=> prevCount +1)
         }
         function minus() {
-            setCount ( count -1)
+            setCount ( (prevCount)=> prevCount -1)
         }
         function reset() {
             setCount(0)
         }
       return(
         <div>
-        <h1> Счетчик: {count} </h1>
+        <h1>Счетчик: {count}</h1>
         <button onClick={plus}> + </button>
         <button onClick={minus}> - </button>
         <button onClick={reset}> Сбросить </button>
         </div>
         )
  } 
-*/
+
