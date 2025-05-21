@@ -1,5 +1,5 @@
 export default function Header(){
-    const now = new Date()
+    const now= new Date()
     return (
        <div>
         <header>
