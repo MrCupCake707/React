@@ -12,7 +12,7 @@ import { ModalContext } from './context/ModalContext'
 function App() 
 {
   const {loading, error, products, addProduct}= useProduct()
-  const {modal,open, close} =useContext(ModalContext)
+  const {modal, open, close} =useContext(ModalContext)
 
   const createHandler = (product: IProduct)=>{
     close()
