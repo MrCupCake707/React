@@ -13,24 +13,19 @@ export function TodoList(){
         isFetchingNextPage
         } = useInfiniteQuery({
         queryKey: ["tasks", "list"], 
-        queryFn: (meta) =>  todoListApi.getTodoList({page: meta.pageParam}, meta),
+        ...todoListApi.getTodoListInfinityQueryOptions()
         enabled: enabled,
-        initialPageParam: 1,
-        getNextPageParam: (result) => result.next
-        select: result=> result.pages.flatMap(page=>page.data)
         })
-
-        todoItems?.pages
-
+        const cursorRef = useIntersection (()=> {
+            fetchNextPage()
+        })
         if (isLoading){
             return <div>Loading...</div>
         }
         if (error){
             return <div>error: {JSON.stringify(error)}</div>
         }
-    const cursorRef = useIntersection (()=> {
-        fetchNextPage()
-    })
+   
     return (
         <div className="p-5 mx-auto max-w [1200] mt-10">
             <h1 className="text-3xl font-bold underline mb-5">Todo List</h1>
@@ -38,13 +33,16 @@ export function TodoList(){
 
             <div>
                 className={"flex flex-col gap-4" + (isPlaceholderData ? " opacity-50" : "")}
-                {todoItems?.data.map(todo => (
+                {todoItems?.map(todo => (
                     <div className="border dorder-slate-300 rounded p-3" key={todo.id}>
                         {todo.text}
                     </div>
                 ))}
             </div>
-            <div className="flex gap-2 mt-4" ref={cursorRef}></div>
+            <div className="flex gap-2 mt-4" ref={cursorRef}>
+                {!hasNextPage && <div>Нет данных для загрузки </div>}
+                {isFetchingNextPage && <div>...Loading</div>}
+                </div>
         </div>
     )
     
