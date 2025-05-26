@@ -1,38 +1,70 @@
-import { useQuery } from "@tanstack/react-query"
+import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { todoListApi } from "./api"
-import { useState } from "react"
+import { useCallback, useRef, useState } from "react"
 
 export function TodoList(){
-    const[page, setPage] = useState(1)
-    const {data: todoItems, error, isPending } = useQuery({
-        queryKey: ["tasks", "list", {page}], 
-        queryFn: (meta) =>  todoListApi.getTodoList({page}, meta)
-    })
-        if (isPending){
+    const [enabled, setEnabled] = useState (false)
+    const {data: todoItems, 
+        error, 
+        isLoading, 
+        isPlaceholderData,
+        fetchNextPage, 
+        hasNextPage, 
+        isFetchingNextPage
+        } = useInfiniteQuery({
+        queryKey: ["tasks", "list"], 
+        queryFn: (meta) =>  todoListApi.getTodoList({page: meta.pageParam}, meta),
+        enabled: enabled,
+        initialPageParam: 1,
+        getNextPageParam: (result) => result.next
+        select: result=> result.pages.flatMap(page=>page.data)
+        })
+
+        todoItems?.pages
+
+        if (isLoading){
             return <div>Loading...</div>
         }
         if (error){
             return <div>error: {JSON.stringify(error)}</div>
         }
+    const cursorRef = useIntersection (()=> {
+        fetchNextPage()
+    })
     return (
-    <div className="p-5 mx-auto max-w-[1200px] mt-10">
-        <h1 className="text-3xl font-bold  mb-5">Todo List</h1> 
-        <div className="flex flex-col gap-4">
-            {todoItems.data.map(todo => (
-            <div className = "botder border-slate-300 rounded p-3" key={todo.id}> {todo.text} </div>))}
-        </div>
-        <div className="flex gap-2 mt-4">
+        <div className="p-5 mx-auto max-w [1200] mt-10">
+            <h1 className="text-3xl font-bold underline mb-5">Todo List</h1>
+            <button onClick={()=> setEnabled(e=> !e)}>Toggle enebled</button>
 
-        </div>
-         <button 
-            onClick={()=> setPage(p => Math.max(p-1, 1))} 
-            className="p-3 rounded border doreder-teal-500"
-            >prev</button>
-        <button 
-            onClick={()=> setPage(p => Math.min(p+1, todoItems.pages))} 
-            className="p-3 rounded border doreder-teal-500"           
-            >next</button>
-        
+            <div>
+                className={"flex flex-col gap-4" + (isPlaceholderData ? " opacity-50" : "")}
+                {todoItems?.data.map(todo => (
+                    <div className="border dorder-slate-300 rounded p-3" key={todo.id}>
+                        {todo.text}
+                    </div>
+                ))}
+            </div>
+            <div className="flex gap-2 mt-4" ref={cursorRef}></div>
         </div>
     )
+    
+}
+
+export function useIntersection (onIntersect: () => void) {
+    const unsubscribe = useRef(()=>{})
+    return useCallback((el: HTMLDivElement | null)=>{
+        const observer = new IntersectionObserver((enties)=>{
+            enties.forEach(intersection => {
+                if(intersection.isIntersecting){
+                    onIntersect()
+                }
+            })
+        })
+        if (el){
+            observer.observe(el)
+            unsubscribe.current = () => observer.disconnect
+        } else {
+            unsubscribe.current()
+        }
+    }, [])
 }
