@@ -1,15 +1,18 @@
-/*
-import React, {createElement as e, useState} from 'react';
+const cart = [
+  { name: 'Товар 1', price: 100, quantity: 2 },
+  { name: 'Товар 2', price: 200, quantity: 1 },
+  { name: 'Товар 3', price: 50, quantity: 5 }
+];
 
-function App() {
-  const [count, setCount] = useState(0)
+const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
- return e('div',{ClassName: 'container'}, [
-  e('h1', {className: 'fond-bold', key: 1}, `Set: ${count}`),
-  e('button', {className: 'py-2 px-4 border', 
-    key: 2, 
-    onClick:()=> setCount(count + 1)}, 
-    'Click')
- ])
+console.log('Общая сумма:', totalPrice);
+
+
+let totalPrice = 0;
+
+for (let i = 0; i < cart.length; i++) {
+  totalPrice += cart[i].price * cart[i].quantity;
 }
-export default App
+
+console.log('Общая сумма:', totalPrice);
